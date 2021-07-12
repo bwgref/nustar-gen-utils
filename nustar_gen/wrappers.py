@@ -4,7 +4,7 @@ import warnings
 from nustar_gen.utils import energy_to_chan, validate_det1_region
 from astropy import units as u
 
-def make_spectra(infile, mod, src_reg,
+def make_spectra(infile, mod, src_reg, usrgti='None',
     mode='01', bgd_reg='None', outpath='None', runmkarf='yes', extended='no'):
     '''
     Generate a script to run nuproducts to extract a source (and optionally
@@ -97,7 +97,10 @@ def make_spectra(infile, mod, src_reg,
             f.write(f'bkgextract=no ')
         else:
             f.write(f'bkgextract=yes bkgregionfile={bgd_reg} ')
-             
+        
+        if usrgti != 'None':
+            f.write(f'usrgtifile={usrgti} ')
+        
         f.write('clobber=yes')
         
     os.chmod(lc_script, stat.S_IRWXG+stat.S_IRWXU)
