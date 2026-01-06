@@ -182,26 +182,35 @@ class Observation():
  
     evdir: str, optional, default obs.datapath+'event_cl'
         Full path to the directory containing the event files
-        
+    
+    evsubdir : str, optional
+        Relative path for the directory containing the event_files.
+            
     out_path: str, optional, default is the obs.evdir
         Full path to the desired output location
         
     '''
         
-    def __init__(self, path='./', seqid=False, evdir=False,
+    def __init__(self, path='./', seqid=False,evsubdir=False, evdir=False,
                 out_path=False):
                                 
+        assert seqid is not False, f"Please specify the sequence ID!"
+        
         self._evdir_lock=False
+        
         self.modules = ['A', 'B']
-
 
         self.set_path(path)
 
         # If you specify the evdir location, make sure nothing can change this
-        if evdir is not False:
+        if evdir is False:
+            if evsubdir is not False:
+                evdir=os.path.join(os.path.abspath(path), os.path.join(seqid, os.path.join(evsubdir)))
+                self._set_evdir(evdir, lock=True)
+        else:
+            assert evsubdir is False, f"Only specify evsubdir or evdir, but not both!"
             evdir = os.path.abspath(evdir)
             self._set_evdir(evdir, lock=True)
-            
             
         if seqid is False:
             self._seqid=False
